@@ -1,18 +1,17 @@
 import React from 'react';
 import { Navbar, Container } from 'react-bootstrap';
-
+import { ReactComponent as Logo } from '../assets/images/logo.svg'; // GENERATE https://maketext.io/
 const navbarStyle = {
   backgroundColor: 'lightblue'
 }
 
-const Header = ( props ) => {
-  const { title } = props;
+const Header = ( title ) => {
   return (
-    <Container>
-      <Navbar style={navbarStyle} data-bs-theme="light">
-          <Navbar.Brand href="/">{ title }</Navbar.Brand>
-      </Navbar>
-    </Container>
+    <Navbar style={navbarStyle} data-bs-theme="light">
+      <Container>
+        <Logo alt={title} style={{ maxWidth: '10rem', maxHeight: '2rem' }}/>
+      </Container>
+    </Navbar>
   )
 }
 
