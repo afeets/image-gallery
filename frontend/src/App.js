@@ -5,6 +5,7 @@ import Search from './components/Search';
 import ImageCard from './components/ImageCard';
 import Welcome from './components/Welcome';
 import { Container, Row, Col } from 'react-bootstrap';
+import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:5050'
 
@@ -14,25 +15,20 @@ const App = () => {
 
   // console.log(images);
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = async (e) => {
     e.preventDefault();
-    // console.log(word);
+    // console.log('sending fetch request');   
 
-    fetch(`${API_URL}/new-image?query=${word}`)
-      .then((res) => res.json())
-      .then((data) => {
-        // console.log(data);
-        // create new array to add images 
-        // DO NOT USE EXISTING ARRAY
+    try {
+      const res = await axios.get(`${API_URL}/new-image?query=${word}`);
+      setImages([{...res.data, title: word }, ...images]);
+    }
+    catch (error) {
+      console.log(error)
+    }
 
-        // add title property to object
-        setImages([{...data, title: word}, ...images])
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    
-      setWord('');
+    // console.log('clearing search form')
+    setWord('');
   };
 
   const handleDeleteImage = (id) => {
