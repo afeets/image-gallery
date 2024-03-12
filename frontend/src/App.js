@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './components/Header';
 import Search from './components/Search';
@@ -13,8 +13,23 @@ const App = () => {
   const [ word, setWord ] = useState('');
   const [ images, setImages ] = useState([]);
 
-  // console.log(images);
+  // retrieve images from mongo db when loading page
+  useEffect(() => {
+    async function fetchData() {
+      // You can await here
+      try {
+        const res = await axios.get(`${API_URL}/images`);
+        setImages(res.data || []);
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, []);
 
+
+  // retrieve from Unsplash and add to images array
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
     // console.log('sending fetch request');   
