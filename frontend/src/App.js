@@ -50,8 +50,15 @@ const App = () => {
     setWord('');
   };
 
-  const handleDeleteImage = (id) => {
-    setImages(images.filter(( image ) => image.id !== id ));
+  const handleDeleteImage = async (id) => {
+    try {
+      const res = await axios.delete(`${API_URL}/images/${id}`);
+      if (res.data?.deleted_id){
+        setImages(images.filter(( image ) => image.id !== id ));
+      }
+    } catch (error){
+      console.log(error);
+    }
   };
  
 
@@ -61,7 +68,6 @@ const App = () => {
 
     try {
       const res = await axios.post(`${API_URL}/images`, imageToBeSaved);
-      // console.log(res.data);
       if (res.data?.inserted_id) {
         setImages(
           images.map((image) => image.id === id ? {...image, saved: true} : image)
