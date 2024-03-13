@@ -64,11 +64,12 @@ def images():
 def image(image_id):
     if request.method == "DELETE":
       result = images_collection.delete_one({"_id": image_id})
+    
       if not result:
-        return {"error", "Image was not deleted"}, 500
+        return {"error":"Image was not deleted"},500
       if result and not result.deleted_count:
-        return {"error", "Image not found"}, 404
-      return {"deleted_id": image_id}, 204
+        return {"error":"Image not found"},404
+      return {"deleted_id": image_id},204
     
 
 if __name__ == "__main__":
