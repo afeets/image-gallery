@@ -18,7 +18,11 @@ const App = () => {
     async function fetchData() {
       // You can await here
       try {
-        const res = await axios.get(`${API_URL}/images`);
+        const res = await axios.get(`${API_URL}/images`,{
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
         setImages(res.data || []);
       }
       catch (error) {

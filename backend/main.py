@@ -22,7 +22,6 @@ if not UNSPLASH_KEY:
   raise EnvironmentError("Please create .env.local file and insert UNSPLASH_API_KEY")
 
 app = Flask(__name__)
-app.config["DEBUG"] = DEBUG
 CORS(app)
 
 # insert_test_document()
@@ -45,7 +44,6 @@ def new_image():
   return data
 
 
-
 @app.route("/images", methods=["GET","POST"])
 def images():
   if request.method == "GET":
@@ -60,6 +58,17 @@ def images():
     result = images_collection.insert_one(image)
     inserted_id = result.inserted_id
     return {"inserted_id": inserted_id}
+    
+
+@app.route("/images/<image_id>", methods=["DELETE"])
+def image(image_id):
+    if request.method == "DELETE":
+      result = images_collection.delete_one({"_id": image_id})
+      if not result:
+        return {"error", "Image was not deleted"}, 500
+      if result and not result.deleted_count:
+        return {"error", "Image not found"}, 404
+      return {"deleted_id": image_id}, 204
     
 
 if __name__ == "__main__":
