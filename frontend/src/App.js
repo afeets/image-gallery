@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 import Header from './components/Header';
 import Search from './components/Search';
 import ImageCard from './components/ImageCard';
@@ -15,26 +17,17 @@ const App = () => {
   const [ images, setImages ] = useState([]);
   const [ loading, setLoading ] = useState(true);
 
-  // retrieve images from mongo db when loading page
   useEffect(() => {
-    async function fetchData() {
-      // You can await here
-      try {
-        const res = await axios.get(`${API_URL}/images`,{
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-        setImages(res.data || []);
-        setLoading(false);
-      }
-      catch (error) {
-        console.log(error);
-      }
+    async function getSavedImages() {
+      const res = await axios.get(`${API_URL}/images`);
+      setImages(res.data || []);
+      setLoading(false);
     }
-    fetchData();
-  }, []);
-
+    getSavedImages()
+    toast.success('Saved images downloaded');
+    }, 
+    [setImages]
+  );
 
   // retrieve from Unsplash and add to images array
   const handleSearchSubmit = async (e) => {
@@ -44,6 +37,7 @@ const App = () => {
     try {
       const res = await axios.get(`${API_URL}/new-image?query=${word}`);
       setImages([{...res.data, title: word }, ...images]);
+      toast.info(`New image ${word.toUpperCase()} was found`)
     }
     catch (error) {
       console.log(error)
@@ -56,9 +50,8 @@ const App = () => {
   const handleDeleteImage = async (id) => {
     try {
       const res = await axios.delete(`${API_URL}/images/${id}`);
-      if (res.data?.deleted_id){
-        setImages(images.filter(( image ) => image.id !== id ));
-      }
+      toast.warn(`Image ${images.find((i) => i.id === id).title.toUpperCase()} was deleted`);
+      setImages(images.filter(( image ) => image.id !== id ));
     } catch (error){
       console.log(error);
     }
@@ -76,6 +69,7 @@ const App = () => {
           images.map((image) => image.id === id ? {...image, saved: true} : image)
         )
       };
+      toast.info(`Image ${imageToBeSaved.title.toUpperCase()} was saved`);
     } 
     catch (error) {
       console.log(error)
@@ -99,7 +93,8 @@ const App = () => {
         )}        
       </Container>
       </>
-      }      
+      }
+      <ToastContainer position="bottom-right" />      
     </div>
   );
 }
